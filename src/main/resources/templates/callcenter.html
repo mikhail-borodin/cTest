@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Список заданий для прозвона клиентов</title>
+</head>
+<body>
+<h2>Список заданий для прозвона клиентов</h2>
+<div>
+    <form action="#" th:action="@{/callcenter}" th:object="${orderForm}" method="post">
+        Поиск: <input type="text" th:field="*{number}" placeholder="Введите номер заказа"/>
+        <input type="submit" value="Найти"/>
+    </form>
+    <br/>
+    <table border="1">
+        <tr>
+            <th>Номер заказа</th>
+            <th>Дата добавления задания</th>
+            <th>Статус</th>
+        </tr>
+        <tr th:each="task : ${tasks}">
+            <td align="center" th:utext="${task.number}">...</td>
+            <td align="center" th:utext="${#dates.format(task.date, 'dd-MM-yyyy HH:mm')}">...</td>
+            <td align="center">
+                <form th:action="@{/checked/{id}(id=${task.id})}" th:object="${task}" method="post">
+                    <!--<input type="hidden" th:field="${task.id}"/>-->
+                    <input type="submit"
+                           th:value="${task.checked == false} ? 'Закрыть' : 'Закрыто'"
+                           th:disabled="${task.checked == true}"/>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

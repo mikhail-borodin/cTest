@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Добавление задания в Call-центр</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    </head>
+    <body>
+        <h2>Добавление нового задания в Call-центр</h2>
+        <form action="#" th:action="@{/courier}" th:object="${orderForm}" method="post">
+            <input type="text" th:field="*{number}" placeholder="Введите номер заказа"/>
+            <input type="submit" value="Отправить"/>
+        </form>
+    </body>
+</html>
