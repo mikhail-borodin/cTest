@@ -1,21 +1,19 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>Error page</title>
+        <title>Ошибка!</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     </head>
     <body th:with="httpStatus=${T(org.springframework.http.HttpStatus).valueOf(#response.status)}">
 
         <h1 th:text="|${httpStatus} - ${httpStatus.reasonPhrase}|"></h1>
 
-
-        <div th:switch="#{response.status}">
-            <p th:case="500"> Writer Ram</p>
-            <p th:case="404">Chief writer Shankar</p>
+        <div th:switch="${#response.status}">
+            <h4 th:case="500">Внутренняя ошибка сервера. Проверьте, что сервер PostgreSQL запущен, база "cdek_test_db" существует, а таблица создана SQL запросом, указанным в файле ReadMe.md</h4>
+            <h4 th:case="404">Такой страницы не существует, зато вы можете перейти по одной из ссылок:</h4>
         </div>
 
-
         <p><a href="courier" th:href="@{/courier}">Вернуться к web-интерфейсу для курьера</a></p>
-        <p><a href="callcenter" th:href="@{/callcenter}">Вернуться к web-интерфейсу для оператор сall-центра</a></p>
+        <p><a href="callcenter" th:href="@{/callcenter}">Вернуться к web-интерфейсу для оператора сall-центра</a></p>
     </body>
 </html>
