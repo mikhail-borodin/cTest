@@ -1,13 +1,14 @@
 package com.example.cdek_test.service;
 
-import com.example.cdek_test.dto.TaskDto;
-import com.example.cdek_test.form.OrderForm;
+import com.example.cdek_test.form.AddForm;
+import com.example.cdek_test.form.FindForm;
+import com.example.cdek_test.form.TaskForm;
 
 import java.util.List;
 
 public interface ITasksService {
-    String newTask(OrderForm order);
-    List<TaskDto> findAll();
-    List<TaskDto> findByNumber(OrderForm order);
+    boolean addNew(AddForm order);
+    List<TaskForm> findAll();
+    List<TaskForm> findByNumber(FindForm order);
     void setChecked(Integer id);
 }

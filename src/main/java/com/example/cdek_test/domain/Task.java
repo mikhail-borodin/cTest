@@ -3,9 +3,13 @@ package com.example.cdek_test.domain;
 import java.sql.Timestamp;
 
 public class Task {
+
     private Integer id;
+
     private String number;
+
     private Timestamp date;
+
     private Boolean checked;
 
     public Integer getId() {
@@ -47,5 +51,14 @@ public class Task {
         this.number = number;
         this.date = date;
         this.checked = checked;
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "number='" + number + '\'' +
+                ", date=" + date +
+                ", checked=" + checked +
+                '}';
     }
 }

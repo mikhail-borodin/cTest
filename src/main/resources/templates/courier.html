@@ -1,14 +1,24 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>Добавление задания в Call-центр</title>
+        <title>Интерфейс для курьера</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     </head>
     <body>
-        <h2>Добавление нового задания в Call-центр</h2>
-        <form action="#" th:action="@{/courier}" th:object="${orderForm}" method="post">
-            <input type="text" th:field="*{number}" placeholder="Введите номер заказа"/>
-            <input type="submit" value="Отправить"/>
+        <h2>Добавление задания в сall-центр</h2>
+        <form action="#" th:action="@{/courier}" th:object="${addForm}" method="post">
+            <table>
+                <tr>
+                    <td>Заказ:</td>
+                    <td><input type="text" th:field="*{number}" placeholder="Введите номер заказа"/></td>
+                    <td style="color:red" th:if="${#fields.hasErrors('number')}" th:errors="*{number}"></td>
+                    <td style="color:green" th:if="${resultSuccess}">Задание успешно добавлено!</td>
+                    <td style="color:red" th:if="${resultError}">Задание уже добавлено!</td>
+                </tr>
+                <tr>
+                    <td><input type="submit" value="Добавить"/></td>
+                </tr>
+            </table>
         </form>
     </body>
 </html>

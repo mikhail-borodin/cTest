@@ -2,20 +2,25 @@ package com.example.cdek_test.service;
 
 
 import com.example.cdek_test.domain.Task;
-import com.example.cdek_test.dto.TaskDto;
-import com.example.cdek_test.form.OrderForm;
+import com.example.cdek_test.form.AddForm;
+import com.example.cdek_test.form.FindForm;
+import com.example.cdek_test.form.TaskForm;
 import com.example.cdek_test.mapper.TasksMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Service
 public class TasksService implements ITasksService {
 
-    private TasksMapper tasksMapper;
+    private static final Logger log = Logger.getLogger(TasksService.class.getName());
+
+    private final TasksMapper tasksMapper;
 
     @Autowired
     public TasksService(TasksMapper tasksMapper) {
@@ -23,35 +28,51 @@ public class TasksService implements ITasksService {
     }
 
     @Override
-    public String newTask(OrderForm order) {
+    @Transactional
+    public boolean addNew(AddForm content) {
+        log.info("Received request to add new task (number = " + content.getNumber() + ")");
 
-        Task task = new Task(order.getNumber(),
+        if (!tasksMapper.isCanAdd(content.getNumber())) {
+            log.info("Error adding task, task already added");
+            return false;
+        }
+
+        Task task = new Task(content.getNumber(),
                 new Timestamp(System.currentTimeMillis()), false);
-        tasksMapper.insert(task);
+        tasksMapper.addNew(task);
+        log.info(task.toString() + " added successfully");
 
-        return "courier";
+        return true;
     }
 
     @Override
-    public List<TaskDto> findAll() {
-        return castToTasksDto(tasksMapper.findAll());
+    public List<TaskForm> findAll() {
+        log.info("Received request to search all tasks");
+
+        return castToTasksForm(tasksMapper.findAll());
     }
 
     @Override
-    public List<TaskDto> findByNumber(OrderForm order) {
-        return castToTasksDto(tasksMapper.findByNumber(order.getNumber()));
+    public List<TaskForm> findByNumber(FindForm content) {
+        log.info("Received request to search tasks (number = " + content.getNumber() + ")");
+
+        return castToTasksForm(tasksMapper.findByNumber(content.getNumber()));
     }
 
     @Override
+    @Transactional
     public void setChecked(Integer id) {
+        log.info("Received request to update task (id = " + id + ")");
+
         tasksMapper.setChecked(id);
     }
 
-    private static List<TaskDto> castToTasksDto(List<Task> tasks) {
-        List<TaskDto> tList = new ArrayList<>();
+    private static List<TaskForm> castToTasksForm(List<Task> tasks) {
+        List<TaskForm> tList = new ArrayList<>();
 
         for (Task task : tasks) {
-            tList.add(new TaskDto(task.getId(), task.getNumber(), task.getDate(),task.getChecked()));
+            tList.add(new TaskForm(task.getId(), task.getNumber(),
+                    task.getDate(), task.getChecked()));
         }
 
         return tList;

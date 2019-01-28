@@ -1,18 +1,23 @@
 package com.example.cdek_test.controller;
 
-import com.example.cdek_test.form.OrderForm;
+import com.example.cdek_test.form.AddForm;
+import com.example.cdek_test.form.FindForm;
 import com.example.cdek_test.service.ITasksService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
 
 @Controller
 public class MainController {
 
-    private ITasksService tasksService;
+    private final ITasksService tasksService;
 
     @Autowired
     public MainController(ITasksService tasksService) {
@@ -21,41 +26,58 @@ public class MainController {
 
     @GetMapping("/courier")
     public String courierForm(Model model) {
-        model.addAttribute("orderForm", new OrderForm());
+
+        model.addAttribute("addForm", new AddForm());
+
         return "courier";
     }
 
-
     @PostMapping("/courier")
-    public String addTask(@Valid @ModelAttribute("orderForm") OrderForm orderForm) {
-        return tasksService.newTask(orderForm);
+    public String addTask(@Valid @ModelAttribute AddForm addForm, BindingResult bindingResult, Model model) {
+
+        if (!bindingResult.hasErrors()) {
+            boolean result = tasksService.addNew(addForm);
+            model.addAttribute((result) ? "resultSuccess" : "resultError", true);
+        }
+
+        return "courier";
     }
 
     @GetMapping("/callcenter")
     public String getTasks(Model model) {
-        model.addAttribute("orderForm", new OrderForm());
+
+        model.addAttribute("findForm", new AddForm());
         model.addAttribute("tasks", tasksService.findAll());
+
         return "callcenter";
     }
 
-    @PostMapping("/callcenter")
-    public String findTasks(@Valid @ModelAttribute("orderForm") OrderForm orderForm, Model model) {
-        if (orderForm.getNumber().isEmpty()) {
+    @PostMapping(params = "find", value = "/callcenter")
+    public String findTasks(@ModelAttribute FindForm findForm, Model model) {
+
+        if (findForm.getNumber().isEmpty()) {
             model.addAttribute("tasks", tasksService.findAll());
+        } else {
+            model.addAttribute("tasks", tasksService.findByNumber(findForm));
         }
-        else {
-            model.addAttribute("tasks", tasksService.findByNumber(orderForm));
-        }
+
         return "callcenter";
     }
 
-    @PostMapping("/checked/{id}")
-    public String checkedTask(@PathVariable Integer id, Model model){
-        tasksService.setChecked(id);
+    @PostMapping(params = "reset", value = "/callcenter")
+    public String resetFindTasks(@ModelAttribute FindForm findForm, Model model) {
+
         model.addAttribute("tasks", tasksService.findAll());
 
         return "redirect:/callcenter";
     }
 
+    @PostMapping("callcenter/checked/{id}")
+    public String checkedTask(@PathVariable Integer id, Model model) {
 
+        tasksService.setChecked(id);
+        model.addAttribute("tasks", tasksService.findAll());
+
+        return "redirect:/callcenter";
+    }
 }
