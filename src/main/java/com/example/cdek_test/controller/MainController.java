@@ -4,13 +4,11 @@ import com.example.cdek_test.form.AddForm;
 import com.example.cdek_test.form.FindForm;
 import com.example.cdek_test.service.ITasksService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -79,5 +77,11 @@ public class MainController {
         model.addAttribute("tasks", tasksService.findAll());
 
         return "redirect:/callcenter";
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    public String notFoundHandler() {
+        return "error";
     }
 }
